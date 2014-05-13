@@ -2,6 +2,7 @@ package com.funnywords;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,23 +17,38 @@ import android.graphics.Color;
 
 public class WordRoom extends Activity {
 	
-	public static final String TAG = "WordRoom";
-	DraggableGridView workSpace;
-	MyWordsGridView wordsSpace;
-	DraggableGridView lettersSpace;
-	ScrabbleDistribution letters;
-	Dictionary dic;
-	Activity ctx;
-	int score_int;
-	boolean modifying = false;
-	String modifyingWord = "";
-	private TextView score;
-	Button submitWord,addLetter;
+	public static final String      TAG = "WordRoom";
+	DraggableGridView               workSpace;
+	MyWordsGridView                 wordsSpace;
+	DraggableGridView               lettersSpace;
+	ScrabbleDistribution            letters;
+	Dictionary                      dic;
+	Activity                        ctx;
+	int                             score_int;
+	boolean                         modifying = false;
+	String                          modifyingWord = "";
+	private TextView                score;
+	private TextView                remainingTimeText;             // textView for remaining time
+	private int                     remainingTime;
+	private long                    startTime;
+	Button                          submitWord,addLetter;
+	private Handler                 timerHandler;
+	private final Runnable timerRunnable = new Runnable(){
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			     remainingTime -= 1;
+				 remainingTimeText.setText(Integer.toString(remainingTime));
+				 timerHandler.postDelayed(timerRunnable, 1000);
+			}
+	};
 	
 	public enum GRIDTYPE {
 		WORD,LETTER, WORK
 	}
 	
+
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 	    // Always call the superclass so it can restore the view hierarchy
 	    super.onRestoreInstanceState(savedInstanceState);
@@ -63,6 +79,7 @@ public class WordRoom extends Activity {
         letters = new ScrabbleDistribution();
         
         score = (TextView) findViewById(R.id.score);
+        remainingTimeText = (TextView) findViewById(R.id.tvTimeRemaining);
         workSpace = (DraggableGridView) findViewById(R.id.workSpace);
         workSpace.setColCount(10);
         wordsSpace = (MyWordsGridView) findViewById(R.id.wordsSpace);
@@ -84,6 +101,11 @@ public class WordRoom extends Activity {
         //other wise load the dictionary
         Log.d(TAG,"Load the dictionary the first time");                               //ethan's cheng
     	dic = new Dictionary(this,R.raw.dictionary_en);
+    	
+    	//start timer thread
+	    timerHandler = new Handler();
+		remainingTime = 300;
+		timerHandler.post(timerRunnable);
     }
     /*
      * Function to add a new letter
@@ -117,7 +139,7 @@ public class WordRoom extends Activity {
 	
 		l.setTextColor(Color.WHITE);
 		
-		if(c.length() == 1){
+		if(c.length() == 1){                                                  //need to take a look at here
 			l.setTextSize(18);
 			/*
 			 * Code for unique color depending on the distribution of the letter 
@@ -178,7 +200,7 @@ public class WordRoom extends Activity {
 				
 				lettersSpace.removeView(v);
 				
-				Button tvNew =  newLetter(((Button)v).getText().toString());
+				Button tvNew =  newLetter(((Button)v).getText().toString());             //add the letter to workspace
 				tvNew.setOnClickListener(workingLetterClickListener());
 				
 				workSpace.addView(tvNew);
@@ -196,7 +218,7 @@ public class WordRoom extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				workSpace.removeView(v);
+				workSpace.removeView(v);                                              //add the letter back to letter space
 				
 				Button tvNew =  newLetter(((Button)v).getText().toString());
 				tvNew.setOnClickListener(clickLetterListener());
@@ -275,9 +297,6 @@ public class WordRoom extends Activity {
 	protected boolean isWord(String word) {
 		
 		if(modifying){
-			
-			
-			
 			if(isWordInThisWord(word,modifyingWord)){
 				
 				if(dic.isWord(word)){
@@ -288,7 +307,6 @@ public class WordRoom extends Activity {
 					Toast.makeText(ctx, ctx.getResources().getString(R.string.invalid_word), Toast.LENGTH_LONG).show();
 					return false;
 				}
-				
 			}else{
 				Toast.makeText(ctx, ctx.getResources().getString(R.string.must_use_previous_word)+"->"+modifyingWord, Toast.LENGTH_LONG).show();
 				return false;
@@ -329,8 +347,6 @@ public class WordRoom extends Activity {
 		}
 		
 		return true;
-		
-		
 	}
 
 	protected void updateScore() {
@@ -361,8 +377,7 @@ public class WordRoom extends Activity {
 		if(dic != null)
 		if(dic.getWords().length > 1)
 			outState.putStringArray("dic", dic.getWords());
-		
-		
+
 	}
 
 	private String[] getStringArray(DraggableGridView v) {
@@ -371,7 +386,7 @@ public class WordRoom extends Activity {
 		
 		for(int i=0;i<v.getChildCount();i++){
 			array[i] = ((Button)v.getChildAt(i)).getText().toString();
-			Log.d("DBG","Vai guardar:"+ array[i]);
+			Log.d(TAG,"Vai guardar:"+ array[i]);
 		}
 		if(array.length > 0)
 			return array;
@@ -399,8 +414,7 @@ public class WordRoom extends Activity {
 			}
 		}
 	}
-	
-	
+
 	
     
 }

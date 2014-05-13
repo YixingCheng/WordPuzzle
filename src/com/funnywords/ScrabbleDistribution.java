@@ -16,6 +16,7 @@ public class ScrabbleDistribution {
 		rand = new Random();
 	}
 
+	//build letter pool based on use frequency of letters         
 	private void rebuildLetters() {
 		myLetters = new ArrayList<Character>();
 		for(int i=0;i<letters.length;i++){

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">WordRoom</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
@@ -11,5 +12,12 @@
     <string name="submit">Add to My Room</string>
     <string name="invalid_word">"Invalid Word"</string>
     <string name="must_use_previous_word">"You have to use the edited word letters!"</string>
-	<string name="use_modified">"You your previous modified word first"</string>
+    <string name="use_modified">"You your previous modified word first"</string>
+    <string name="title_activity_wrmain">WRmainActivity</string>
+    <string name="single_player">Single Player</string>
+    <string name="vs_people">VS People</string>
+    <string name="view_highscore">High Score</string>
+    <string name="shareSNS">Share</string>
+    
+
 </resources>

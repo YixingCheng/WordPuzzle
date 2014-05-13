@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.util.Log;
 
 public class Dictionary {
+	private final static String TAG = "WR.Dictionary";
 	
 	int resId;
 	String[] words;
@@ -20,7 +21,7 @@ public class Dictionary {
 		this.resId = resId;
 		words = new String[354934];
 		buildDictionary();
-		
+		Log.d(TAG, "Dictionary has been successfully loaded");
 	}
 
 	public Dictionary(Activity ctx, int resId, String[] stringArray) {
@@ -30,7 +31,7 @@ public class Dictionary {
 	}
 
 	private void buildDictionary() {
-		InputStream inputStream = ctx.getResources().openRawResource(resId);
+		InputStream inputStream = ctx.getResources().openRawResource(resId);         //read raw dictionary file
 
 	    InputStreamReader inputreader = new InputStreamReader(inputStream);
 	    BufferedReader buffreader = new BufferedReader(inputreader);
@@ -51,7 +52,6 @@ public class Dictionary {
 	}
 
 	public boolean isWord(String input){
-		
 		return Arrays.binarySearch(words, input)>=0;
 	}
 	

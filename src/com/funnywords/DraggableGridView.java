@@ -32,7 +32,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     protected boolean enabled = true, touching = false;
     //anim vars
     public static int animT = 150;
-    protected ArrayList<Integer> newPositions = new ArrayList<Integer>();
+    protected ArrayList<Integer> newPositions = new ArrayList<Integer>();       
     //listeners
     protected OnRearrangeListener onRearrangeListener;
     protected OnClickListener secondaryOnClickListener;
@@ -41,13 +41,13 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     private int originalCols = 5;
     
     //CONSTRUCTOR AND HELPERS
-    public DraggableGridView (Context context, AttributeSet attrs) {
+    public DraggableGridView (Context context, AttributeSet attrs) {           //constructor for view are call during contentsetup
         super(context, attrs);
         setListeners();
         handler.removeCallbacks(updateTask);
         handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
         setChildrenDrawingOrderEnabled(true);
-        originalCols = 5;
+        originalCols = 5;                                                     //set original number of columns to 5
         DisplayMetrics metrics = new DisplayMetrics();
         if(isInEditMode()){
         	dpi = 320;
@@ -60,16 +60,19 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     public void setColCount(int x){
     	originalCols = x;
     }
+    
     protected void setListeners()
     {
     	setOnTouchListener(this);
     	super.setOnClickListener(this);
         setOnLongClickListener(this);
     }
+    
     @Override
     public void setOnClickListener(OnClickListener l) {
     	secondaryOnClickListener = l;
     }
+    
     protected Runnable updateTask = new Runnable() {
         public void run()
         {
@@ -135,6 +138,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 	            getChildAt(i).layout(xy.x, xy.y, xy.x + childSize, xy.y + childSize);
         	}
     }
+    
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
     	if (dragged == -1)
@@ -145,6 +149,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     		return i + 1;
     	return i;
     }
+    
     public int getIndexFromCoor(int x, int y)
     {
         int col = getColOrRowFromCoor(x), row = getColOrRowFromCoor(y + scroll); 
