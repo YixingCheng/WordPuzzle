@@ -15,21 +15,31 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.funnywords.WRmainActivity"
-            android:label="@string/title_activity_wrmain" >
+            android:label="@string/title_activity_wrmain"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.funnywords.WordRoom"
-            android:label="@string/app_name" 
-            android:parentActivityName="com.funnywords.WRmainActivity">
+            android:label="@string/app_name"
+            android:parentActivityName="com.funnywords.LoadingActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.funnywords.LoadingActivity" />
+        </activity>
+        <activity
+            android:name="com.funnywords.LoadingActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:parentActivityName="com.funnywords.WRmainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.funnywords.WRmainActivity" />
         </activity>
-        
     </application>
 
 </manifest>

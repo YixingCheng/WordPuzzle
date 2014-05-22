@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 
 public class WRmainActivity extends Activity {
-    private final static String TAG = "WRmain";
+    public final static String TAG = "WoodRoom";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class WRmainActivity extends Activity {
 				// TODO Auto-generated method stub
 				//  when you are writing in the parentheses of setOnClickListener,
 				//    you have to use FromActivity. to qualify the this
-				 Intent startSinglePlay = new Intent(WRmainActivity.this, WordRoom.class);
+				 Intent startSinglePlay = new Intent(WRmainActivity.this, LoadingActivity.class);
                  startActivity(startSinglePlay); 
 			  }			
 		   });

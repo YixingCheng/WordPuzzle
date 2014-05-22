@@ -18,6 +18,8 @@
     <string name="vs_people">VS People</string>
     <string name="view_highscore">High Score</string>
     <string name="shareSNS">Share</string>
-    
+    <string name="title_activity_loading">LoadingActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

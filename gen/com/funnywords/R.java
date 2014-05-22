@@ -457,6 +457,14 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int logo=0x7f010029;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int metaButtonBarButtonStyle=0x7f01006b;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int metaButtonBarStyle=0x7f01006a;
         /**  The type of navigation to use. 
          <p>Must be one of the following constant values.</p>
 <table>
@@ -794,15 +802,16 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f070002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f080008;
+        public static final int abc_search_url_text_holo=0x7f080009;
         public static final int abc_search_url_text_normal=0x7f080000;
         public static final int abc_search_url_text_pressed=0x7f080002;
         public static final int abc_search_url_text_selected=0x7f080001;
-        public static final int blue=0x7f080004;
-        public static final int darkBlue=0x7f080003;
-        public static final int grey=0x7f080005;
-        public static final int red=0x7f080007;
-        public static final int white=0x7f080006;
+        public static final int black_overlay=0x7f080003;
+        public static final int blue=0x7f080005;
+        public static final int darkBlue=0x7f080004;
+        public static final int grey=0x7f080006;
+        public static final int red=0x7f080008;
+        public static final int white=0x7f080007;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1017,9 +1026,9 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f06004f;
+        public static final int action_settings=0x7f060050;
         public static final int activity_chooser_view_content=0x7f060025;
-        public static final int addLetter=0x7f060048;
+        public static final int addLetter=0x7f060049;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
         public static final int checkbox=0x7f06002d;
@@ -1032,14 +1041,15 @@ containing a value of this type.
         public static final int end=0x7f060013;
         public static final int expand_activities_button=0x7f060026;
         public static final int expanded_menu=0x7f06002c;
-        public static final int gameToolbar=0x7f06003c;
+        public static final int gameToolbar=0x7f06003d;
         public static final int home=0x7f060014;
         public static final int homeAsUp=0x7f060005;
         public static final int icon=0x7f06002a;
         public static final int ifRoom=0x7f06000a;
         public static final int image=0x7f060027;
-        public static final int lettersSpace=0x7f060047;
-        public static final int level=0x7f060040;
+        public static final int imageView1=0x7f06003c;
+        public static final int lettersSpace=0x7f060048;
+        public static final int level=0x7f060041;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
         public static final int middle=0x7f060012;
@@ -1049,7 +1059,7 @@ containing a value of this type.
         public static final int progress_circular=0x7f060018;
         public static final int progress_horizontal=0x7f060019;
         public static final int radio=0x7f06002f;
-        public static final int score=0x7f06003e;
+        public static final int score=0x7f06003f;
         public static final int search_badge=0x7f060032;
         public static final int search_bar=0x7f060031;
         public static final int search_button=0x7f060033;
@@ -1060,32 +1070,32 @@ containing a value of this type.
         public static final int search_plate=0x7f060036;
         public static final int search_src_text=0x7f060037;
         public static final int search_voice_btn=0x7f06003b;
-        public static final int shareSNS=0x7f06004e;
+        public static final int shareSNS=0x7f06004f;
         public static final int shortcut=0x7f06002e;
         public static final int showCustom=0x7f060007;
         public static final int showHome=0x7f060004;
         public static final int showTitle=0x7f060006;
-        public static final int single_player=0x7f06004b;
-        public static final int speed=0x7f060042;
+        public static final int single_player=0x7f06004c;
+        public static final int speed=0x7f060043;
         public static final int split_action_bar=0x7f06001e;
-        public static final int submitWord=0x7f060049;
+        public static final int submitWord=0x7f06004a;
         public static final int submit_area=0x7f060039;
         public static final int tabMode=0x7f060002;
-        public static final int timeRemaining=0x7f060044;
+        public static final int timeRemaining=0x7f060045;
         public static final int title=0x7f06002b;
-        public static final int title_img=0x7f06004a;
+        public static final int title_img=0x7f06004b;
         public static final int top_action_bar=0x7f060020;
-        public static final int tvLevel=0x7f06003f;
-        public static final int tvScore=0x7f06003d;
-        public static final int tvSpeed=0x7f060041;
-        public static final int tvTimeRemaining=0x7f060043;
+        public static final int tvLevel=0x7f060040;
+        public static final int tvScore=0x7f06003e;
+        public static final int tvSpeed=0x7f060042;
+        public static final int tvTimeRemaining=0x7f060044;
         public static final int up=0x7f060021;
         public static final int useLogo=0x7f060003;
-        public static final int view_highscore=0x7f06004d;
-        public static final int vs_people=0x7f06004c;
+        public static final int view_highscore=0x7f06004e;
+        public static final int vs_people=0x7f06004d;
         public static final int withText=0x7f06000c;
-        public static final int wordsSpace=0x7f060045;
-        public static final int workSpace=0x7f060046;
+        public static final int wordsSpace=0x7f060046;
+        public static final int workSpace=0x7f060047;
     }
     public static final class integer {
         /**  The maximum number of action buttons that should be permitted within
@@ -1136,9 +1146,10 @@ containing a value of this type.
         public static final int abc_popup_menu_item_layout=0x7f030014;
         public static final int abc_search_dropdown_item_icons_2line=0x7f030015;
         public static final int abc_search_view=0x7f030016;
-        public static final int activity_word_room=0x7f030017;
-        public static final int activity_wrmain=0x7f030018;
-        public static final int support_simple_spinner_dropdown_item=0x7f030019;
+        public static final int activity_loading=0x7f030017;
+        public static final int activity_word_room=0x7f030018;
+        public static final int activity_wrmain=0x7f030019;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
     }
     public static final class menu {
         public static final int wrmain=0x7f0d0000;
@@ -1189,6 +1200,8 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
         public static final int action_settings=0x7f0b000e;
         public static final int app_name=0x7f0b000d;
+        public static final int dummy_button=0x7f0b001f;
+        public static final int dummy_content=0x7f0b0020;
         public static final int hello_world=0x7f0b000f;
         public static final int invalid_word=0x7f0b0016;
         public static final int level=0x7f0b0012;
@@ -1200,6 +1213,7 @@ containing a value of this type.
         public static final int speed=0x7f0b0013;
         public static final int submit=0x7f0b0015;
         public static final int time_left=0x7f0b0011;
+        public static final int title_activity_loading=0x7f0b001e;
         public static final int title_activity_wrmain=0x7f0b0019;
         public static final int use_modified=0x7f0b0018;
         public static final int view_highscore=0x7f0b001c;
@@ -1232,6 +1246,10 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0c0084;
+        public static final int ButtonBar=0x7f0c0086;
+        public static final int ButtonBarButton=0x7f0c0087;
+        public static final int FullscreenActionBarStyle=0x7f0c0088;
+        public static final int FullscreenTheme=0x7f0c0085;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0c0063;
@@ -2003,6 +2021,46 @@ containing a value of this type.
           @attr name com.funnywords:initialActivityCount
         */
         public static final int ActivityChooserView_initialActivityCount = 0;
+        /** 
+         Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels.
+    
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #ButtonBarContainerTheme_metaButtonBarButtonStyle com.funnywords:metaButtonBarButtonStyle}</code></td><td></td></tr>
+           <tr><td><code>{@link #ButtonBarContainerTheme_metaButtonBarStyle com.funnywords:metaButtonBarStyle}</code></td><td></td></tr>
+           </table>
+           @see #ButtonBarContainerTheme_metaButtonBarButtonStyle
+           @see #ButtonBarContainerTheme_metaButtonBarStyle
+         */
+        public static final int[] ButtonBarContainerTheme = {
+            0x7f01006a, 0x7f01006b
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.funnywords.R.attr#metaButtonBarButtonStyle}
+          attribute's value can be found in the {@link #ButtonBarContainerTheme} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.funnywords:metaButtonBarButtonStyle
+        */
+        public static final int ButtonBarContainerTheme_metaButtonBarButtonStyle = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.funnywords.R.attr#metaButtonBarStyle}
+          attribute's value can be found in the {@link #ButtonBarContainerTheme} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.funnywords:metaButtonBarStyle
+        */
+        public static final int ButtonBarContainerTheme_metaButtonBarStyle = 0;
         /** Attributes that can be used with a CompatTextView.
            <p>Includes the following attributes:</p>
            <table>

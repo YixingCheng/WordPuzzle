@@ -5,45 +5,59 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
-
 
 
 public class WordRoom extends Activity {
 	
-	public static final String      TAG = "WordRoom";
 	DraggableGridView               workSpace;
 	MyWordsGridView                 wordsSpace;
 	DraggableGridView               lettersSpace;
 	ScrabbleDistribution            letters;
-	Dictionary                      dic;
-	Activity                        ctx;
-	int                             score_int;
+	
+	Activity                        currentAct;                            // current activity
+	private Dictionary              dic;
+	
+	public int                      gameScore;
 	boolean                         modifying = false;
 	String                          modifyingWord = "";
-	private TextView                score;
+	private TextView                scoreText;
 	private TextView                remainingTimeText;             // textView for remaining time
-	private int                     remainingTime;
-	private long                    startTime;
+	public int                      remainingTime;
+	public int                      gameLevel;
 	Button                          submitWord,addLetter;
+	private boolean                 runnableFlag = true;           // Flag for runnable
+	
+	//timer thread
 	private Handler                 timerHandler;
 	private final Runnable timerRunnable = new Runnable(){
-		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			     remainingTime -= 1;
-				 remainingTimeText.setText(Integer.toString(remainingTime));
-				 timerHandler.postDelayed(timerRunnable, 1000);
+			
+			  if(runnableFlag){
+			        if(remainingTime <= 0){
+			             timesUP();
+		             }
+			        remainingTime -= 1;
+			     
+				    remainingTimeText.setText(Integer.toString(remainingTime));
+				    timerHandler.postDelayed(timerRunnable, 1000);
+			     } 
 			}
-	};
-	
+	 };
+
 	public enum GRIDTYPE {
 		WORD,LETTER, WORK
 	}
@@ -52,14 +66,17 @@ public class WordRoom extends Activity {
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 	    // Always call the superclass so it can restore the view hierarchy
 	    super.onRestoreInstanceState(savedInstanceState);
-	    Log.d(TAG,"restore from previous instance state");
+	    Log.d(WRmainActivity.TAG,"restore from previous instance state");
 	    // Restore state members from saved instance
 	    
-	    score_int = savedInstanceState.getInt("score_int",0);
+	    gameScore = savedInstanceState.getInt("score_int",0);
 	    modifying = savedInstanceState.getBoolean("modifying",false);
 	    modifyingWord = savedInstanceState.getString("modifyingWord");
 	    
-	    score.setText( String.valueOf(score_int));
+	    //may be something wrong here
+	    remainingTime = savedInstanceState.getInt("remainingTime", 10);
+	    
+	    scoreText.setText( String.valueOf(gameScore));
 	    
 	    if(savedInstanceState.getStringArray("workSpace") != null)
     		buildFromStringArray(savedInstanceState.getStringArray("workSpace"),GRIDTYPE.WORK);
@@ -74,13 +91,14 @@ public class WordRoom extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_room);
+        Log.d(WRmainActivity.TAG, "game activity, after set Content");
         
-        ctx = this;
-        letters = new ScrabbleDistribution();
+        currentAct = this;                                                             //get the current activity
+        letters = new ScrabbleDistribution();                                          //initialize letter pool
         
-        score = (TextView) findViewById(R.id.score);
-        remainingTimeText = (TextView) findViewById(R.id.tvTimeRemaining);
-        workSpace = (DraggableGridView) findViewById(R.id.workSpace);
+        scoreText = (TextView) findViewById(R.id.score);
+        remainingTimeText = (TextView) findViewById(R.id.timeRemaining); 
+        workSpace = (DraggableGridView) findViewById(R.id.workSpace);                  //that's where the constructor is called
         workSpace.setColCount(10);
         wordsSpace = (MyWordsGridView) findViewById(R.id.wordsSpace);
         lettersSpace = (DraggableGridView) findViewById(R.id.lettersSpace);
@@ -91,16 +109,27 @@ public class WordRoom extends Activity {
         submitWord.setOnClickListener(submitListener());
         addLetter.setOnClickListener(addLetterListener());
         
+        Log.d(WRmainActivity.TAG, "game activity, after all texts & buttons");
+        
+        //I'll need to modify here since I don't want to load dictionary 
         if(savedInstanceState != null)
 	        if(savedInstanceState.getStringArray("dic") != null){
-	        	Log.d(TAG,"restore the instance state of the dictionary");
+	        	Log.d(WRmainActivity.TAG,"restore the instance state of the dictionary");
 	        	dic = new Dictionary(this,R.raw.dictionary_en,savedInstanceState.getStringArray("dic"));
 	        	return;
 	        }
         
-        //other wise load the dictionary
-        Log.d(TAG,"Load the dictionary the first time");                               //ethan's cheng
-    	dic = new Dictionary(this,R.raw.dictionary_en);
+        //check is the dict is already existed
+        dic = LoadingActivity.dict;
+        if (dic == null){
+        	 Log.d(WRmainActivity.TAG, "dictionary doesn't not exist");
+        	 LoadingActivity.dict = new Dictionary(this.getParent(), R.raw.dictionary_en);       //maybe something wrong here
+             dic = LoadingActivity.dict;
+           }
+        else{
+        	 // dic = new Dictionary(this, R.raw.dictionary_en);
+        	 Log.d(WRmainActivity.TAG, "dictionary already existed");
+          }  
     	
     	//start timer thread
 	    timerHandler = new Handler();
@@ -115,15 +144,10 @@ public class WordRoom extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
 				Button letter = newLetter(String.valueOf(letters.getRandomLetter()));
-			
 				letter.setOnClickListener(clickLetterListener());         //set onclicklistener to new letter
 				lettersSpace.addView(letter);                             //add new letter to letter space
-				
-				
 				updateScore();
-				
 			}
 		};
 	}
@@ -153,7 +177,8 @@ public class WordRoom extends Activity {
 		
 			l.setBackgroundResource(R.drawable.unselected);
 			
-		}else{
+		  }
+		else {
 			
 			l.setTextSize(18-c.length()/2);
 			switch(c.length()){
@@ -172,18 +197,12 @@ public class WordRoom extends Activity {
 					break;
 				case 5:
 					l.setBackgroundResource(R.drawable.orange_b);
-					break;
-					
+					break;		
 				default:
-
 					l.setBackgroundResource(R.drawable.blue_b);
-					
-					break;
-				
-			}
-			
+					break;	
+			 }
 		}
-		
 		
 		return l;
 	}
@@ -192,7 +211,6 @@ public class WordRoom extends Activity {
 	 * Function to handle the click of a letter from letterSpace
 	 */
 	protected OnClickListener clickLetterListener() {
-		
 		return new OnClickListener() {
 			
 			@Override
@@ -204,8 +222,6 @@ public class WordRoom extends Activity {
 				tvNew.setOnClickListener(workingLetterClickListener());
 				
 				workSpace.addView(tvNew);
-				
-				
 			}
 		};
 	}
@@ -224,7 +240,6 @@ public class WordRoom extends Activity {
 				tvNew.setOnClickListener(clickLetterListener());
 				
 				lettersSpace.addView(tvNew);
-				
 			}
 		};
 	}
@@ -237,28 +252,21 @@ public class WordRoom extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
 				String word ="";
 				for(int i=0;i<workSpace.getChildCount();i++){
 					word+= ((Button)workSpace.getChildAt(i)).getText();
-				}
-				
+				  }
 				if(isWord(word)){
 					workSpace.removeAllViews();
-					
 					Button w = newLetter(word);
 					w.setOnClickListener(wordClickListener());
-					
 					wordsSpace.addView(w);
-					
-					
-				}
-				
+						
+				 }
 				updateScore();
-				
-			}
-		};
-	}
+			 }
+		 };
+	 }
 	
 	/*
 	 * Function to handle the press of a word
@@ -272,7 +280,7 @@ public class WordRoom extends Activity {
 				String text = (String) ((Button) v).getText();
 				
 				if(modifying){
-					Toast.makeText(ctx, ctx.getResources().getString(R.string.use_modified), Toast.LENGTH_LONG).show();
+					Toast.makeText(currentAct, currentAct.getResources().getString(R.string.use_modified), Toast.LENGTH_LONG).show();
 					return;
 				}
 				for(int i=0;i<text.length();i++){
@@ -286,7 +294,6 @@ public class WordRoom extends Activity {
 				modifying = true;
 				modifyingWord = text;
 				updateScore();
-				
 			}
 		};
 	}
@@ -304,11 +311,11 @@ public class WordRoom extends Activity {
 					modifyingWord = "";
 					return true;
 				}else{
-					Toast.makeText(ctx, ctx.getResources().getString(R.string.invalid_word), Toast.LENGTH_LONG).show();
+					Toast.makeText(currentAct, currentAct.getResources().getString(R.string.invalid_word), Toast.LENGTH_LONG).show();
 					return false;
 				}
 			}else{
-				Toast.makeText(ctx, ctx.getResources().getString(R.string.must_use_previous_word)+"->"+modifyingWord, Toast.LENGTH_LONG).show();
+				Toast.makeText(currentAct, currentAct.getResources().getString(R.string.must_use_previous_word)+"->"+modifyingWord, Toast.LENGTH_LONG).show();
 				return false;
 			}
 			
@@ -316,7 +323,7 @@ public class WordRoom extends Activity {
 			if(dic.isWord(word)){
 				return true;
 			}else{
-				Toast.makeText(ctx, ctx.getResources().getString(R.string.invalid_word)+"->"+word, Toast.LENGTH_LONG).show();
+				Toast.makeText(currentAct, currentAct.getResources().getString(R.string.invalid_word)+"->"+word, Toast.LENGTH_LONG).show();
 				return false;
 			}
 			
@@ -345,24 +352,41 @@ public class WordRoom extends Activity {
 			}
 			
 		}
-		
 		return true;
 	}
 
 	protected void updateScore() {
-		score.setText(getFinalScore());
+		scoreText.setText(getFinalScore());
 		
 	}
 
 	private String getFinalScore(){
-		score_int = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
-    	return String.valueOf(score_int);
+		gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
+		if (gameScore > 10){
+			   runnableFlag = false;                                      //stop the timer
+			   
+			   AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
+			   levelPassed.setIcon(R.drawable.ic_launcher);
+			   levelPassed.setTitle("Congratulation!");
+			   levelPassed.setPositiveButton("Back", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					      finish();
+					      startActivity(new Intent(WordRoom.this, WordRoom.class));
+				     }
+			     });
+			   levelPassed.show();
+		  }
+    	return String.valueOf(gameScore);
     }
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
+		int currentRemainingTime = remainingTime;
 		String[] workSpaceArray = getStringArray( workSpace);
 		String[] wordsSpaceArray = getStringArray( wordsSpace);
 		String[] lettersSpaceArray = getStringArray( lettersSpace);
@@ -370,7 +394,8 @@ public class WordRoom extends Activity {
 		outState.putStringArray("workSpace", workSpaceArray);
 		outState.putStringArray("wordsSpace", wordsSpaceArray);
 		outState.putStringArray("lettersSpace", lettersSpaceArray);
-		outState.putInt("score_int", score_int);
+		outState.putInt("remainingTime", currentRemainingTime);
+		outState.putInt("score_int", gameScore);
 		outState.putBoolean("modifying", modifying);
 		outState.putString("modifyingWord", modifyingWord);
 		
@@ -386,7 +411,7 @@ public class WordRoom extends Activity {
 		
 		for(int i=0;i<v.getChildCount();i++){
 			array[i] = ((Button)v.getChildAt(i)).getText().toString();
-			Log.d(TAG,"Vai guardar:"+ array[i]);
+			Log.d(WRmainActivity.TAG,"Vai guardar:"+ array[i]);
 		}
 		if(array.length > 0)
 			return array;
@@ -415,6 +440,52 @@ public class WordRoom extends Activity {
 		}
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		   if (keyCode == KeyEvent.KEYCODE_BACK){
+			     AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+			     alertbox.setIcon(R.drawable.ic_launcher);
+			     alertbox.setTitle("Exit Game");
+			     alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						 finish();
+					}
+			    	 
+			       });
+			     alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+					}
+			    	 
+			       });
+			     
+			     alertbox.show();
+		      }
+		   return super.onKeyDown(keyCode, event);
+	  }
 	
+	private void timesUP(){
+		   
+		   runnableFlag = false;
+		   Log.d(WRmainActivity.TAG, "removed timmerRunnable");
+		   
+		   AlertDialog.Builder timesUPAlert = new AlertDialog.Builder(this);
+		   timesUPAlert.setIcon(R.drawable.ic_launcher);
+		   timesUPAlert.setTitle("Time's UP");
+		   timesUPAlert.setPositiveButton("Back", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				  finish();
+			     }
+		     });
+		   timesUPAlert.show();
+	  }
     
 }

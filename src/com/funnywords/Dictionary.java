@@ -7,32 +7,34 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 public class Dictionary {
-	private final static String TAG = "WR.Dictionary";
 	
 	int resId;
 	String[] words;
-	Activity ctx;
+	Activity callingAct;    //the calling activity
 	
-	public Dictionary(Activity ctx,int resId) {
-		this.ctx = ctx;
+	// better to use context for the first parameter
+	public Dictionary(Activity activity, int resId) {
+		this.callingAct = activity;
 		this.resId = resId;
 		words = new String[354934];
+		// this is where do IO to load dictionary
 		buildDictionary();
-		Log.d(TAG, "Dictionary has been successfully loaded");
+		Log.d(WRmainActivity.TAG, "after build dictionary");
 	}
 
-	public Dictionary(Activity ctx, int resId, String[] stringArray) {
-		this.ctx = ctx;
+	public Dictionary(Activity activity, int resId, String[] stringArray) {
+		// this.ctx = ctx;
+		this.callingAct = activity;
 		this.resId = resId;
 		this.words = stringArray;
 	}
 
 	private void buildDictionary() {
-		InputStream inputStream = ctx.getResources().openRawResource(resId);         //read raw dictionary file
-
+		InputStream inputStream = callingAct.getResources().openRawResource(resId);         //read raw dictionary file
 	    InputStreamReader inputreader = new InputStreamReader(inputStream);
 	    BufferedReader buffreader = new BufferedReader(inputreader);
 	    String line;
@@ -40,8 +42,7 @@ public class Dictionary {
 	    
 	    try {
 	        while (( line = buffreader.readLine()) != null) {
-	        	words[i]=line.toUpperCase();
-	            
+	        	words[i]=line.toUpperCase();       
 	            //Log.d("DBG",words[i]);
 	            i++;
 	        }
