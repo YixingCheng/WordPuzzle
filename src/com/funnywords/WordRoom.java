@@ -13,13 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 
 
 public class WordRoom extends Activity {
+	private static final String LEVEL = "game_levle";
+	private static final String CURRENT_SCORE = "current_score";
 	
 	DraggableGridView               workSpace;
 	MyWordsGridView                 wordsSpace;
@@ -29,15 +30,17 @@ public class WordRoom extends Activity {
 	Activity                        currentAct;                            // current activity
 	private Dictionary              dic;
 	
-	public int                      gameScore;
+	public  int                     gameScore;
+	private int                     requiredScore;
 	boolean                         modifying = false;
 	String                          modifyingWord = "";
 	private TextView                scoreText;
 	private TextView                remainingTimeText;             // textView for remaining time
+	private TextView                levelLable;
 	public int                      remainingTime;
-	public int                      gameLevel;
 	Button                          submitWord,addLetter;
 	private boolean                 runnableFlag = true;           // Flag for runnable
+	private Bundle                  intentExtra;                   
 	
 	//timer thread
 	private Handler                 timerHandler;
@@ -57,7 +60,30 @@ public class WordRoom extends Activity {
 			     } 
 			}
 	 };
-
+	 
+	
+	public enum GAMELEVEL {
+	   ONE(20, 300), TWO(50, 300), THREE(90, 300), FOUR(140, 300), FIVE(200, 300);
+	   
+	   private int requiredScore;
+	   private int gameTime;
+	   //may be game speed in the future
+	   
+	   GAMELEVEL(int score, int time){
+		     requiredScore = score;
+		     gameTime = time;
+	      }
+	   
+	   private int getTime() {
+		      return gameTime; 
+	      }
+	   
+	   private int getScore() {
+		      return requiredScore; 
+	      } 
+	}
+    public GAMELEVEL gameLevel;                                // Global enum for game level
+	
 	public enum GRIDTYPE {
 		WORD,LETTER, WORK
 	}
@@ -68,7 +94,7 @@ public class WordRoom extends Activity {
 	    super.onRestoreInstanceState(savedInstanceState);
 	    Log.d(WRmainActivity.TAG,"restore from previous instance state");
 	    // Restore state members from saved instance
-	    
+	     
 	    gameScore = savedInstanceState.getInt("score_int",0);
 	    modifying = savedInstanceState.getBoolean("modifying",false);
 	    modifyingWord = savedInstanceState.getString("modifyingWord");
@@ -92,11 +118,29 @@ public class WordRoom extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_room);
         Log.d(WRmainActivity.TAG, "game activity, after set Content");
+        runnableFlag = true;                                                       //reset the runnable flag to true
+        
+        intentExtra = getIntent().getExtras();
+        if (intentExtra == null){
+        	 gameLevel = GAMELEVEL.valueOf("ONE");
+        	 requiredScore = gameLevel.getScore();
+        	 levelLable = (TextView) findViewById(R.id.level);
+        	 levelLable.setText(Integer.toString(gameLevel.ordinal() + 1));        //when first start the game, set the level label to 1
+        	 Log.d(WRmainActivity.TAG, "start the game the first time");
+          }
+        else{
+        	 gameLevel = (GAMELEVEL) intentExtra.getSerializable(LEVEL);
+        	 gameScore = intentExtra.getInt(CURRENT_SCORE);
+        	 requiredScore = gameLevel.getScore();
+        	 levelLable = (TextView) findViewById(R.id.level);
+        	 levelLable.setText(Integer.toString(gameLevel.ordinal() + 1));
+          }
         
         currentAct = this;                                                             //get the current activity
         letters = new ScrabbleDistribution();                                          //initialize letter pool
         
         scoreText = (TextView) findViewById(R.id.score);
+        scoreText.setText(Integer.toString(gameScore));
         remainingTimeText = (TextView) findViewById(R.id.timeRemaining); 
         workSpace = (DraggableGridView) findViewById(R.id.workSpace);                  //that's where the constructor is called
         workSpace.setColCount(10);
@@ -362,19 +406,23 @@ public class WordRoom extends Activity {
 
 	private String getFinalScore(){
 		gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
-		if (gameScore > 10){
+		if (gameScore > requiredScore){
 			   runnableFlag = false;                                      //stop the timer
 			   
 			   AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
 			   levelPassed.setIcon(R.drawable.ic_launcher);
 			   levelPassed.setTitle("Congratulation!");
-			   levelPassed.setPositiveButton("Back", new DialogInterface.OnClickListener() {
+			   levelPassed.setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
 					      finish();
-					      startActivity(new Intent(WordRoom.this, WordRoom.class));
+					      Intent startNextLevel = new Intent(WordRoom.this, WordRoom.class);
+					      GAMELEVEL nextLevel = GAMELEVEL.values()[gameLevel.ordinal() + 1];
+					      startNextLevel.putExtra(LEVEL, nextLevel);
+					      startNextLevel.putExtra(CURRENT_SCORE, gameScore);
+					      startActivity(startNextLevel);
 				     }
 			     });
 			   levelPassed.show();

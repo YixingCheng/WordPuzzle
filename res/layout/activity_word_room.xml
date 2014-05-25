@@ -61,7 +61,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="1"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/grey" />
         </LinearLayout>

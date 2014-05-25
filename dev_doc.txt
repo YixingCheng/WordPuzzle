@@ -1,3 +1,11 @@
 Development Document
 5/21/2014  1 hour
 1. Moved dictionary loading part to splash activity, really increase user experience.
+
+5/23/2014 2 hours
+1. designed the single player mode
+  public enum GAMELEVEL {
+	   ONE(20, 300), TWO(50, 300), THREE(90, 300), FOUR(140, 300), FIVE(200, 300);
+  just 5 levels right now
+2. I need to figure out how to get the game speed involved
+
