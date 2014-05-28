@@ -9,3 +9,11 @@ Development Document
   just 5 levels right now
 2. I need to figure out how to get the game speed involved
 
+5/25/2014 2 hours
+1. previous score calculation formula
+   gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
+ i  
+  
+5/27/2014 3 hours
+1. add viewScore activity which can be used to view previous high scores
+2. write the class for record high score---score class

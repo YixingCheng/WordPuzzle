@@ -1026,7 +1026,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f060050;
+        public static final int action_settings=0x7f060051;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int addLetter=0x7f060049;
         public static final int always=0x7f06000b;
@@ -1052,6 +1052,7 @@ containing a value of this type.
         public static final int level=0x7f060041;
         public static final int listMode=0x7f060001;
         public static final int list_item=0x7f060029;
+        public static final int listview=0x7f060050;
         public static final int middle=0x7f060012;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
@@ -1149,10 +1150,12 @@ containing a value of this type.
         public static final int activity_loading=0x7f030017;
         public static final int activity_word_room=0x7f030018;
         public static final int activity_wrmain=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int activity_wrscore=0x7f03001a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
     }
     public static final class menu {
         public static final int wrmain=0x7f0d0000;
+        public static final int wrscore=0x7f0d0001;
     }
     public static final class raw {
         public static final int dictionary_en=0x7f050000;
@@ -1215,6 +1218,7 @@ containing a value of this type.
         public static final int time_left=0x7f0b0011;
         public static final int title_activity_loading=0x7f0b001e;
         public static final int title_activity_wrmain=0x7f0b0019;
+        public static final int title_activity_wrscore=0x7f0b0021;
         public static final int use_modified=0x7f0b0018;
         public static final int view_highscore=0x7f0b001c;
         public static final int vs_people=0x7f0b001b;

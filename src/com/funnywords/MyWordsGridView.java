@@ -19,7 +19,6 @@ public class MyWordsGridView extends DraggableGridView{
 		}
 		
 		return score;
-		
 	}
 
 }

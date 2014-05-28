@@ -34,6 +34,7 @@ public class WordRoom extends Activity {
 	private int                     requiredScore;
 	boolean                         modifying = false;
 	String                          modifyingWord = "";
+	private String                  currentWord = "";
 	private TextView                scoreText;
 	private TextView                remainingTimeText;             // textView for remaining time
 	private TextView                levelLable;
@@ -63,7 +64,7 @@ public class WordRoom extends Activity {
 	 
 	
 	public enum GAMELEVEL {
-	   ONE(20, 300), TWO(50, 300), THREE(90, 300), FOUR(140, 300), FIVE(200, 300);
+	   ONE(10, 300), TWO(20, 300), THREE(30, 300), FOUR(40, 300), FIVE(50, 300);
 	   
 	   private int requiredScore;
 	   private int gameTime;
@@ -84,6 +85,10 @@ public class WordRoom extends Activity {
 	}
     public GAMELEVEL gameLevel;                                // Global enum for game level
 	
+    private enum UPDATETYPE {
+    	LETTER, WORDIN, WORDOUT
+    }
+    
 	public enum GRIDTYPE {
 		WORD,LETTER, WORK
 	}
@@ -122,6 +127,7 @@ public class WordRoom extends Activity {
         
         intentExtra = getIntent().getExtras();
         if (intentExtra == null){
+        	 gameScore = 0;
         	 gameLevel = GAMELEVEL.valueOf("ONE");
         	 requiredScore = gameLevel.getScore();
         	 levelLable = (TextView) findViewById(R.id.level);
@@ -191,7 +197,7 @@ public class WordRoom extends Activity {
 				Button letter = newLetter(String.valueOf(letters.getRandomLetter()));
 				letter.setOnClickListener(clickLetterListener());         //set onclicklistener to new letter
 				lettersSpace.addView(letter);                             //add new letter to letter space
-				updateScore();
+				updateScore(UPDATETYPE.LETTER);
 			}
 		};
 	}
@@ -220,10 +226,8 @@ public class WordRoom extends Activity {
 			Log.d("DBG","Cor:"+intColor);*/
 		
 			l.setBackgroundResource(R.drawable.unselected);
-			
 		  }
 		else {
-			
 			l.setTextSize(18-c.length()/2);
 			switch(c.length()){
 				case 1: 
@@ -296,18 +300,18 @@ public class WordRoom extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				String word ="";
+				currentWord = "";                                                 //reset currentWord
 				for(int i=0;i<workSpace.getChildCount();i++){
-					word+= ((Button)workSpace.getChildAt(i)).getText();
+					currentWord += ((Button)workSpace.getChildAt(i)).getText();
 				  }
-				if(isWord(word)){
+				if(isWord(currentWord)){
 					workSpace.removeAllViews();
-					Button w = newLetter(word);
+					Button w = newLetter(currentWord);
 					w.setOnClickListener(wordClickListener());
 					wordsSpace.addView(w);
 						
 				 }
-				updateScore();
+				updateScore(UPDATETYPE.WORDIN);                                    //that's where update the score
 			 }
 		 };
 	 }
@@ -337,7 +341,7 @@ public class WordRoom extends Activity {
 				wordsSpace.removeView(v);
 				modifying = true;
 				modifyingWord = text;
-				updateScore();
+				updateScore(UPDATETYPE.WORDOUT);
 			}
 		};
 	}
@@ -399,34 +403,68 @@ public class WordRoom extends Activity {
 		return true;
 	}
 
-	protected void updateScore() {
+	protected void updateScore(UPDATETYPE updatetype) {
+		switch(updatetype){
+		     case LETTER:
+		    	           gameScore--;
+		    	           break;
+		     case WORDIN:
+		    	           gameScore = gameScore + 2 * currentWord.length();
+		    	           break;
+		     case WORDOUT: 
+		                   gameScore = gameScore - 2 * currentWord.length();
+		                   break;
+		     default:
+		    	           break;
+		 }
 		scoreText.setText(getFinalScore());
-		
 	}
 
 	private String getFinalScore(){
-		gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
-		if (gameScore > requiredScore){
-			   runnableFlag = false;                                      //stop the timer
+		//gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
+		
+		if (gameScore >= requiredScore){
+			   runnableFlag = false;                                            //stop the timer
+			   Log.d(WRmainActivity.TAG, "current level is " + Integer.toString(gameLevel.ordinal()+1));
 			   
-			   AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
-			   levelPassed.setIcon(R.drawable.ic_launcher);
-			   levelPassed.setTitle("Congratulation!");
-			   levelPassed.setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
+			   // if completed all levels
+			   if(gameLevel.ordinal() == 4) {
+				   Log.d(WRmainActivity.TAG, "I am here");
+				   AlertDialog.Builder levelComplete = new AlertDialog.Builder(this);
+				   levelComplete.setIcon(R.drawable.ic_launcher);
+				   levelComplete.setTitle("Congratulation!");
+				   levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						      finish();
+						      Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
+						      startActivity(backtoMain);
+					     }
+				     });
+				   levelComplete.show();
+			      }
+			   else {   
+			       AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
+			       levelPassed.setIcon(R.drawable.ic_launcher);
+			       levelPassed.setTitle("Congratulation!");
+			       levelPassed.setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					      finish();
-					      Intent startNextLevel = new Intent(WordRoom.this, WordRoom.class);
-					      GAMELEVEL nextLevel = GAMELEVEL.values()[gameLevel.ordinal() + 1];
-					      startNextLevel.putExtra(LEVEL, nextLevel);
-					      startNextLevel.putExtra(CURRENT_SCORE, gameScore);
-					      startActivity(startNextLevel);
-				     }
-			     });
-			   levelPassed.show();
-		  }
+				   @Override
+				   public void onClick(DialogInterface dialog, int which) {
+					    // TODO Auto-generated method stub
+					         finish();
+					         Intent startNextLevel = new Intent(WordRoom.this, WordRoom.class);
+					         GAMELEVEL nextLevel = GAMELEVEL.values()[gameLevel.ordinal() + 1];
+					         startNextLevel.putExtra(LEVEL, nextLevel);
+					         startNextLevel.putExtra(CURRENT_SCORE, gameScore);
+					         startActivity(startNextLevel);
+				        }
+			        });
+			      levelPassed.show();
+			    }
+		   }
     	return String.valueOf(gameScore);
     }
 
@@ -530,7 +568,7 @@ public class WordRoom extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				  finish();
+				    finish();
 			     }
 		     });
 		   timesUPAlert.show();
