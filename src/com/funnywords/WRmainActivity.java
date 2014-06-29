@@ -23,7 +23,14 @@ public class WRmainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wrmain);
-		scoreList = new scoreClass();                                    //instantiate scoreList
+		
+		if (scoreClass.scoreRank  == null){
+			  Log.d(WRmainActivity.TAG, "create the score arraly list the first time");
+		      scoreList = new scoreClass();                                           //instantiate scoreList
+		  }
+		else{
+			  Log.d(WRmainActivity.TAG, "scoreRank already exists");
+		  }
 		
 	/*	if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
@@ -76,8 +83,6 @@ public class WRmainActivity extends Activity {
 					 Intent viewScore = new Intent(WRmainActivity.this, WRScoreActivity.class);
 					 Log.d(WRmainActivity.TAG, "high score button clicked1");
 					 startActivity(viewScore);
-					 Log.d(WRmainActivity.TAG, "something wrong");  
-					 Log.d(WRmainActivity.TAG, "high score button clicked2");
 	              
 				  }			
 			   });

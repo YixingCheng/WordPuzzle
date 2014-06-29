@@ -51,20 +51,23 @@ public class WordRoom extends Activity {
 			// TODO Auto-generated method stub
 			
 			  if(runnableFlag){
-			        if(remainingTime <= 0){
+			        if(remainingTime <= 1){
 			             timesUP();
 		             }
 			        remainingTime -= 1;
 			     
 				    remainingTimeText.setText(Integer.toString(remainingTime));
 				    timerHandler.postDelayed(timerRunnable, 1000);
-			     } 
+			     }
+			  else{
+				  timerHandler.postDelayed(timerRunnable, 1000);
+			   }
 			}
 	 };
 	 
 	
 	public enum GAMELEVEL {
-	   ONE(10, 300), TWO(20, 300), THREE(30, 300), FOUR(40, 300), FIVE(50, 300);
+	   ONE(20, 300), TWO(40, 300), THREE(70, 300), FOUR(110, 300), FIVE(160, 300);
 	   
 	   private int requiredScore;
 	   private int gameTime;
@@ -100,12 +103,14 @@ public class WordRoom extends Activity {
 	    Log.d(WRmainActivity.TAG,"restore from previous instance state");
 	    // Restore state members from saved instance
 	     
+	    runnableFlag = savedInstanceState.getBoolean("timer_flag");
+	    Log.d(WRmainActivity.TAG, Boolean.toString(runnableFlag));
 	    gameScore = savedInstanceState.getInt("score_int",0);
 	    modifying = savedInstanceState.getBoolean("modifying",false);
 	    modifyingWord = savedInstanceState.getString("modifyingWord");
 	    
 	    //may be something wrong here
-	    remainingTime = savedInstanceState.getInt("remainingTime", 10);
+	    //remainingTime = savedInstanceState.getInt("remainingTime", 10);
 	    
 	    scoreText.setText( String.valueOf(gameScore));
 	    
@@ -186,6 +191,13 @@ public class WordRoom extends Activity {
 		remainingTime = 300;
 		timerHandler.post(timerRunnable);
     }
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(WRmainActivity.TAG, "onStart called");
+        runnableFlag = true;
+     }
     /*
      * Function to add a new letter
      */
@@ -429,21 +441,52 @@ public class WordRoom extends Activity {
 			   
 			   // if completed all levels
 			   if(gameLevel.ordinal() == 4) {
-				   Log.d(WRmainActivity.TAG, "I am here");
-				   AlertDialog.Builder levelComplete = new AlertDialog.Builder(this);
-				   levelComplete.setIcon(R.drawable.ic_launcher);
-				   levelComplete.setTitle("Congratulation!");
-				   levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
+				   
+				   if (gameScore > scoreClass.getMin()) {
+			    	   scoreClass.insertScore(gameScore);
+					   
+					   AlertDialog.Builder highscore = new AlertDialog.Builder(this);
+					   highscore.setIcon(R.drawable.ic_launcher);
+					   highscore.setTitle("New high score!");
+					   highscore.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							     AlertDialog.Builder levelComplete = new AlertDialog.Builder(WordRoom.this);
+				                 levelComplete.setIcon(R.drawable.ic_launcher);
+				                 levelComplete.setTitle("Congratulation!");
+				                 levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
 					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						      finish();
-						      Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
-						      startActivity(backtoMain);
-					     }
-				     });
-				   levelComplete.show();
+					             @Override
+					             public void onClick(DialogInterface dialog, int which) {
+						               // TODO Auto-generated method stub
+						               finish();
+						               Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
+						               startActivity(backtoMain);
+					                 }
+				                 });
+				                 levelComplete.show();
+						     }
+					     });
+					     highscore.show();
+			         }
+				   else{
+					     AlertDialog.Builder levelComplete = new AlertDialog.Builder(this);
+		                 levelComplete.setIcon(R.drawable.ic_launcher);
+		                 levelComplete.setTitle("Congratulation!");
+		                 levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
+			
+			             @Override
+			             public void onClick(DialogInterface dialog, int which) {
+				               // TODO Auto-generated method stub
+				               finish();
+				               Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
+				               startActivity(backtoMain);
+			                 }
+		                 });
+		                 levelComplete.show();
+				    }
 			      }
 			   else {   
 			       AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
@@ -472,7 +515,9 @@ public class WordRoom extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		int currentRemainingTime = remainingTime;
+		Log.d(WRmainActivity.TAG, "leaving wordroom");
+		runnableFlag = false;
+		// int currentRemainingTime = remainingTime;
 		String[] workSpaceArray = getStringArray( workSpace);
 		String[] wordsSpaceArray = getStringArray( wordsSpace);
 		String[] lettersSpaceArray = getStringArray( lettersSpace);
@@ -480,7 +525,9 @@ public class WordRoom extends Activity {
 		outState.putStringArray("workSpace", workSpaceArray);
 		outState.putStringArray("wordsSpace", wordsSpaceArray);
 		outState.putStringArray("lettersSpace", lettersSpaceArray);
-		outState.putInt("remainingTime", currentRemainingTime);
+		// outState.putInt("remainingTime", currentRemainingTime);
+		outState.putBoolean("timer_flag", true);
+		Log.d(WRmainActivity.TAG, Boolean.toString(runnableFlag));
 		outState.putInt("score_int", gameScore);
 		outState.putBoolean("modifying", modifying);
 		outState.putString("modifyingWord", modifyingWord);
@@ -558,7 +605,6 @@ public class WordRoom extends Activity {
 	private void timesUP(){
 		   
 		   runnableFlag = false;
-		   Log.d(WRmainActivity.TAG, "removed timmerRunnable");
 		   
 		   AlertDialog.Builder timesUPAlert = new AlertDialog.Builder(this);
 		   timesUPAlert.setIcon(R.drawable.ic_launcher);
@@ -568,8 +614,27 @@ public class WordRoom extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				    finish();
-			     }
+				 if (gameScore > scoreClass.getMin()) {
+			    	  
+			    	   scoreClass.insertScore(gameScore);
+					   
+					   AlertDialog.Builder highscore = new AlertDialog.Builder(WordRoom.this);
+					   highscore.setIcon(R.drawable.ic_launcher);
+					   highscore.setTitle("New high score!");
+					   highscore.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							     finish();
+						     }
+					     });
+					     highscore.show();
+			         }
+				 else{
+					    finish(); 
+				  }
+			   }
 		     });
 		   timesUPAlert.show();
 	  }

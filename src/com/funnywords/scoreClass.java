@@ -3,6 +3,7 @@ package com.funnywords;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 import android.util.Log;
 
 public class scoreClass {
@@ -11,37 +12,34 @@ public class scoreClass {
       
       public scoreClass(){
     	   scoreRank = new ArrayList<Integer>();
+    	   for(int i = 0; i < RANKLENGTH; i++ ){
+    		       scoreRank.add(0);
+    	     }
         }
       
-      public static ArrayList<Integer> sortScore(ArrayList<Integer> unsortedList) {
+      public static void sortScore() {
     	    try{
-    	    	 Collections.sort(unsortedList);
-    	    	 
+    	    	 Collections.sort(scoreRank);
+    	    	 ArrayList<Integer> tempList = new ArrayList<Integer>();
+    	    	 for(int i = 0; i < RANKLENGTH; i++){
+    	    		     tempList.add(scoreRank.get(i));
+    	    	   }
+    	    	 scoreRank.clear();
+    	    	 for(int i = 0; i < RANKLENGTH; i++){
+	    		         scoreRank.add(tempList.remove(RANKLENGTH - 1 - i));
+	    	       }	 
     	      } catch(NullPointerException e){
     	    	  Log.d(WRmainActivity.TAG, "the list is null!");
     	      }
-    	    
-			return unsortedList;
        }
       
-      public static ArrayList<Integer> insertScore(int newHighScore, ArrayList<Integer> originalList){
+      public static void insertScore(int newHighScore){
     	      scoreRank.remove(RANKLENGTH - 1);
     	      scoreRank.add(newHighScore);
-    	      scoreRank = sortScore(originalList);
-              return scoreRank;
-        }
-      
-      public static ArrayList<Integer> getRank() {
-    	    return scoreRank;  
-        }
-      
-      public static ArrayList<Integer> updateScoreRank(int score){
-            if (scoreRank.size()< RANKLENGTH){
-            	    scoreRank.add(score);
-               }  
-            else{
-            	  scoreRank = insertScore(score, scoreRank);
-               }
-    	    return scoreRank;
-        }
+    	      sortScore();
+         }
+    
+      public static int getMin(){
+    	     return scoreRank.get(RANKLENGTH - 1);
+         }
 }
