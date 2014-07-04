@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 public class WRmainActivity extends Activity {
     public final static String TAG = "WoodRoom";
+    public final static int SINGLEMODE = 1;
+    public final static int TIMEATTACK = 2;
     public scoreClass scoreList;
 	
 	@Override
@@ -67,11 +69,13 @@ public class WRmainActivity extends Activity {
 		singlePlayer.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				 Log.d(WRmainActivity.TAG, "single button clicked");
 				 Intent startSinglePlay = new Intent(WRmainActivity.this, LoadingActivity.class);
-				 Log.d(WRmainActivity.TAG, "single button clicked");
-                 startActivity(startSinglePlay); 
-			  }			
+				 Bundle b = new Bundle();
+				 b.putInt("gamemode", SINGLEMODE);
+				 startSinglePlay.putExtras(b);
+                 startActivity(startSinglePlay);
+                 finish();
+			   }			
 		   });
 		
 		final Button highScore = (Button) findViewById(R.id.view_highscore);
@@ -79,14 +83,26 @@ public class WRmainActivity extends Activity {
 			highScore.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					 Log.d(WRmainActivity.TAG, "high score button clicked");
 					 Intent viewScore = new Intent(WRmainActivity.this, WRScoreActivity.class);
-					 Log.d(WRmainActivity.TAG, "high score button clicked1");
 					 startActivity(viewScore);
 	              
 				  }			
 			   });
 		
+		final Button timeAttack = (Button) findViewById(R.id.time_attack);
+			
+			timeAttack.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					 Intent startSinglePlay = new Intent(WRmainActivity.this, LoadingActivity.class);
+					 Bundle b = new Bundle();
+					 b.putInt("gamemode", TIMEATTACK);
+					 startSinglePlay.putExtras(b);
+	                 startActivity(startSinglePlay);
+	                 finish();
+				  }			
+			   });
+			
 	}
 
 }

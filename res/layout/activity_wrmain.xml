@@ -49,6 +49,14 @@
             android:text="@string/single_player" />
         
         <Button
+            android:id="@+id/time_attack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal|center"
+            android:text="@string/time_attack" />
+        
+        <Button
             android:id="@+id/vs_people"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -23,5 +23,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_wrscore">WRscoreActivity</string>
     <string name="now_loading">Now Loading</string>
+    <string name="time_attack">Time Attack</string>
+    <string name="title_activity_time_attack">TimeAttackActivity</string>
 
 </resources>

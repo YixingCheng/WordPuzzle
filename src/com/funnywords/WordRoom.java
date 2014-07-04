@@ -41,7 +41,8 @@ public class WordRoom extends Activity {
 	public int                      remainingTime;
 	Button                          submitWord,addLetter;
 	private boolean                 runnableFlag = true;           // Flag for runnable
-	private Bundle                  intentExtra;                   
+	private Bundle                  intentExtra;
+//	private Bundle                  intentMode;
 	
 	//timer thread
 	private Handler                 timerHandler;

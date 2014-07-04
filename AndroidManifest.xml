@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="8"
         android:targetSdkVersion="19" />
 
     <application
@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.funnywords.WRmainActivity"
+            android:name=".WRmainActivity"
             android:label="@string/title_activity_wrmain"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
@@ -24,29 +24,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.funnywords.WordRoom"
+            android:name=".WordRoom"
             android:label="@string/app_name"
-            android:parentActivityName="com.funnywords.LoadingActivity" >
+            android:parentActivityName=".LoadingActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.funnywords.LoadingActivity" />
         </activity>
         <activity
-            android:name="com.funnywords.LoadingActivity"
+            android:name=".LoadingActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.funnywords.WRmainActivity"
+            android:parentActivityName=".WRmainActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.funnywords.WRmainActivity" />
         </activity>
         <activity
-            android:name="com.funnywords.WRScoreActivity"
+            android:name=".WRScoreActivity"
             android:label="@string/title_activity_wrscore"
-            android:parentActivityName="com.funnywords.WRmainActivity" >
+            android:parentActivityName=".WRmainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.funnywords.WRmainActivity" />
+        </activity>
+        <activity
+            android:name=".TimeAttackActivity"
+            android:label="@string/title_activity_time_attack"
+            android:parentActivityName=".LoadingActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.funnywords.LoadingActivity" />
         </activity>
     </application>
 
