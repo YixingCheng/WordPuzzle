@@ -25,5 +25,9 @@
     <string name="now_loading">Now Loading</string>
     <string name="time_attack">Time Attack</string>
     <string name="title_activity_time_attack">TimeAttackActivity</string>
+    <string name="title_activity_new_score">NewScoreActivity</string>
+    <string name="title_section1">Single Mode</string>
+    <string name="title_section2">Time Attack</string>
+    <string name="title_section3">Section 3</string>
 
 </resources>

@@ -39,7 +39,7 @@ public class TimeAttackActivity extends Activity {
 	public int                      remainingTime;
 	Button                          submitWord,addLetter;
 	private boolean                 runnableFlag = true;           // Flag for runnable
-	private Bundle                  intentExtra;
+//	private Bundle                  intentExtra;
 //	private Bundle                  intentMode;
 	
 	//timer thread
@@ -102,40 +102,27 @@ public class TimeAttackActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_word_room);
+        setContentView(R.layout.activity_time_attack);
         Log.d(WRmainActivity.TAG, "game activity, after set Content");
         runnableFlag = true;                                                       //reset the runnable flag to true
         
-        intentExtra = getIntent().getExtras();
-        if (intentExtra == null){
-        	 gameScore = 0;
-        	 gameLevel = GAMELEVEL.valueOf("ONE");
-        	 requiredScore = gameLevel.getScore();
-        	 levelLable = (TextView) findViewById(R.id.level);
-        	 levelLable.setText(Integer.toString(gameLevel.ordinal() + 1));        //when first start the game, set the level label to 1
-        	 Log.d(WRmainActivity.TAG, "start the game the first time");
-          }
-        else{
-        	 gameLevel = (GAMELEVEL) intentExtra.getSerializable(LEVEL);
-        	 gameScore = intentExtra.getInt(CURRENT_SCORE);
-        	 requiredScore = gameLevel.getScore();
-        	 levelLable = (TextView) findViewById(R.id.level);
-        	 levelLable.setText(Integer.toString(gameLevel.ordinal() + 1));
-          }
+        gameScore = 0;
+        levelLable = (TextView) findViewById(R.id.levelTA);
+        levelLable.setText("1");        //when first start the game, set the level label to 1
         
         currentAct = this;                                                             //get the current activity
         letters = new ScrabbleDistribution();                                          //initialize letter pool
         
-        scoreText = (TextView) findViewById(R.id.score);
+        scoreText = (TextView) findViewById(R.id.scoreTA);
         scoreText.setText(Integer.toString(gameScore));
-        remainingTimeText = (TextView) findViewById(R.id.timeRemaining); 
-        workSpace = (DraggableGridView) findViewById(R.id.workSpace);                  //that's where the constructor is called
+        remainingTimeText = (TextView) findViewById(R.id.timeRemainingTA); 
+        workSpace = (DraggableGridView) findViewById(R.id.workSpaceTA);                  //that's where the constructor is called
         workSpace.setColCount(10);
-        wordsSpace = (MyWordsGridView) findViewById(R.id.wordsSpace);
-        lettersSpace = (DraggableGridView) findViewById(R.id.lettersSpace);
+        wordsSpace = (MyWordsGridView) findViewById(R.id.wordsSpaceTA);
+        lettersSpace = (DraggableGridView) findViewById(R.id.lettersSpaceTA);
         lettersSpace.setColCount(8);
-        submitWord = (Button) findViewById(R.id.submitWord);
-        addLetter = (Button) findViewById(R.id.addLetter);
+        submitWord = (Button) findViewById(R.id.submitWordTA);
+        addLetter = (Button) findViewById(R.id.addLetterTA);
         wordsSpace.setColCount(3);
         submitWord.setOnClickListener(submitListener());
         addLetter.setOnClickListener(addLetterListener());
@@ -146,11 +133,11 @@ public class TimeAttackActivity extends Activity {
         if(savedInstanceState != null)
 	        if(savedInstanceState.getStringArray("dic") != null){
 	        	Log.d(WRmainActivity.TAG,"restore the instance state of the dictionary");
-	        	dic = new Dictionary(this,R.raw.dictionary_en,savedInstanceState.getStringArray("dic"));
+	        	dic = new Dictionary(this,R.raw.dictionary_en, savedInstanceState.getStringArray("dic"));
 	        	return;
 	        }
         
-        //check is the dict is already existed
+        //check if the dict is already existed
         dic = LoadingActivity.dict;
         if (dic == null){
         	 Log.d(WRmainActivity.TAG, "dictionary doesn't not exist");
@@ -164,7 +151,7 @@ public class TimeAttackActivity extends Activity {
     	
     	//start timer thread
 	    timerHandler = new Handler();
-		remainingTime = 300;
+		remainingTime = 15;
 		timerHandler.post(timerRunnable);
     }
     
@@ -185,7 +172,7 @@ public class TimeAttackActivity extends Activity {
 				Button letter = newLetter(String.valueOf(letters.getRandomLetter()));
 				letter.setOnClickListener(clickLetterListener());         //set onclicklistener to new letter
 				lettersSpace.addView(letter);                             //add new letter to letter space
-				updateScore(UPDATETYPE.LETTER);
+				updateScoreAndTime(UPDATETYPE.LETTER);
 			}
 		};
 	}
@@ -299,7 +286,7 @@ public class TimeAttackActivity extends Activity {
 					wordsSpace.addView(w);
 						
 				 }
-				updateScore(UPDATETYPE.WORDIN);                                    //that's where update the score
+				updateScoreAndTime(UPDATETYPE.WORDIN);                                    //that's where update the score
 			 }
 		 };
 	 }
@@ -329,7 +316,7 @@ public class TimeAttackActivity extends Activity {
 				wordsSpace.removeView(v);
 				modifying = true;
 				modifyingWord = text;
-				updateScore(UPDATETYPE.WORDOUT);
+				updateScoreAndTime(UPDATETYPE.WORDOUT);
 			}
 		};
 	}
@@ -390,14 +377,17 @@ public class TimeAttackActivity extends Activity {
 		}
 		return true;
 	}
-
-	protected void updateScore(UPDATETYPE updatetype) {
+    
+	
+	//method used to update time and score
+	protected void updateScoreAndTime(UPDATETYPE updatetype) {
 		switch(updatetype){
 		     case LETTER:
 		    	           gameScore--;
 		    	           break;
 		     case WORDIN:
 		    	           gameScore = gameScore + 2 * currentWord.length();
+		    	           remainingTime +=5;
 		    	           break;
 		     case WORDOUT: 
 		                   gameScore = gameScore - 2 * currentWord.length();
@@ -409,81 +399,7 @@ public class TimeAttackActivity extends Activity {
 	}
 
 	private String getFinalScore(){
-		//gameScore = wordsSpace.getScoreWords()-lettersSpace.getChildCount()+workSpace.getChildCount();
-		
-		if (gameScore >= requiredScore){
-			   runnableFlag = false;                                            //stop the timer
-			   Log.d(WRmainActivity.TAG, "current level is " + Integer.toString(gameLevel.ordinal()+1));
-			   
-			   // if completed all levels
-			   if(gameLevel.ordinal() == 4) {
-				   
-				   if (gameScore > scoreClass.getMin()) {
-			    	   scoreClass.insertScore(gameScore);
-					   
-					   AlertDialog.Builder highscore = new AlertDialog.Builder(this);
-					   highscore.setIcon(R.drawable.ic_launcher);
-					   highscore.setTitle("New high score!");
-					   highscore.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							     AlertDialog.Builder levelComplete = new AlertDialog.Builder(WordRoom.this);
-				                 levelComplete.setIcon(R.drawable.ic_launcher);
-				                 levelComplete.setTitle("Congratulation!");
-				                 levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
-					
-					             @Override
-					             public void onClick(DialogInterface dialog, int which) {
-						               // TODO Auto-generated method stub
-						               finish();
-						               Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
-						               startActivity(backtoMain);
-					                 }
-				                 });
-				                 levelComplete.show();
-						     }
-					     });
-					     highscore.show();
-			         }
-				   else{
-					     AlertDialog.Builder levelComplete = new AlertDialog.Builder(this);
-		                 levelComplete.setIcon(R.drawable.ic_launcher);
-		                 levelComplete.setTitle("Congratulation!");
-		                 levelComplete.setPositiveButton("Main Menu", new DialogInterface.OnClickListener() {
-			
-			             @Override
-			             public void onClick(DialogInterface dialog, int which) {
-				               // TODO Auto-generated method stub
-				               finish();
-				               Intent backtoMain = new Intent(WordRoom.this, WRmainActivity.class);
-				               startActivity(backtoMain);
-			                 }
-		                 });
-		                 levelComplete.show();
-				    }
-			      }
-			   else {   
-			       AlertDialog.Builder levelPassed = new AlertDialog.Builder(this);
-			       levelPassed.setIcon(R.drawable.ic_launcher);
-			       levelPassed.setTitle("Congratulation!");
-			       levelPassed.setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
-				
-				   @Override
-				   public void onClick(DialogInterface dialog, int which) {
-					    // TODO Auto-generated method stub
-					         finish();
-					         Intent startNextLevel = new Intent(WordRoom.this, WordRoom.class);
-					         GAMELEVEL nextLevel = GAMELEVEL.values()[gameLevel.ordinal() + 1];
-					         startNextLevel.putExtra(LEVEL, nextLevel);
-					         startNextLevel.putExtra(CURRENT_SCORE, gameScore);
-					         startActivity(startNextLevel);
-				        }
-			        });
-			      levelPassed.show();
-			    }
-		   }
+	
     	return String.valueOf(gameScore);
     }
 
@@ -594,9 +510,9 @@ public class TimeAttackActivity extends Activity {
 			    	  
 			    	   scoreClass.insertScore(gameScore);
 					   
-					   AlertDialog.Builder highscore = new AlertDialog.Builder(WordRoom.this);
+					   AlertDialog.Builder highscore = new AlertDialog.Builder(TimeAttackActivity.this);
 					   highscore.setIcon(R.drawable.ic_launcher);
-					   highscore.setTitle("New high score!");
+					   highscore.setTitle("New high score in time attack!");
 					   highscore.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 						
 						@Override

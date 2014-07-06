@@ -7,7 +7,9 @@ import android.os.Handler;
 import android.util.Log;
 
 public class LoadingActivity extends Activity {
-    private static long SPLASH_TIME_OUT = 1000;
+    private static long SPLASH_TIME_OUT = 3000;
+    public final static int SINGLEMODE = 1;
+    public final static int TIMEATTACK = 2;
 	public static Dictionary dict;
 	private Handler delayHandler;
 	private int gameMode;
@@ -24,13 +26,21 @@ public class LoadingActivity extends Activity {
         
         if (dict != null){
              Log.d(WRmainActivity.TAG, "the dictionary has been created before");
-             Intent i = new Intent(LoadingActivity.this, WordRoom.class);
-             Bundle bundle = new Bundle();
-             bundle.putInt("gameMode", gameMode);
-             i.putExtras(bundle);
-             startActivity(i);
-             Log.d(WRmainActivity.TAG, "so started game activity immediately");
-             finish();
+             switch(gameMode){
+                  case SINGLEMODE:
+                	  Intent singleIntent = new Intent(LoadingActivity.this, WordRoom.class);
+                	  startActivity(singleIntent);
+                	  finish();
+                	  break;
+                  case TIMEATTACK:
+                	  Intent timeIntent = new Intent(LoadingActivity.this, TimeAttackActivity.class);
+                	  startActivity(timeIntent);
+                      finish();
+                      break;
+                  default: 
+                	  finish();
+                	  break;
+               }
           }
         
     }
@@ -43,13 +53,21 @@ public class LoadingActivity extends Activity {
         delayHandler.postDelayed(new Runnable() {
         	  @Override
         	  public void run(){
-        		  Intent i = new Intent(LoadingActivity.this, WordRoom.class);
-        		  Bundle bundle = new Bundle();
-                  bundle.putInt("gameMode", gameMode);
-                  i.putExtras(bundle);
-                  startActivity(i);
-                  Log.d(WRmainActivity.TAG, "after started game activity");
-                  finish();
+        		  switch(gameMode){
+        		  		case SINGLEMODE:
+        		  			Intent singleIntent = new Intent(LoadingActivity.this, WordRoom.class);
+        		  			startActivity(singleIntent);
+        		  			finish();
+        		  			break;
+        		  		case TIMEATTACK:
+        		  			Intent timeIntent = new Intent(LoadingActivity.this, TimeAttackActivity.class);
+        		  			startActivity(timeIntent);
+        		  			finish();
+        		  			break;
+        		  		default: 
+        		  			finish();
+        		  			break;
+        		  	  }
         	    }
           }, SPLASH_TIME_OUT);
         

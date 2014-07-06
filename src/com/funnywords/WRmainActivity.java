@@ -1,7 +1,6 @@
 package com.funnywords;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,8 +18,9 @@ public class WRmainActivity extends Activity {
     public final static String TAG = "WoodRoom";
     public final static int SINGLEMODE = 1;
     public final static int TIMEATTACK = 2;
-    public scoreClass scoreList;
+    public scoreClass singleScoreList;
 	
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,16 +28,11 @@ public class WRmainActivity extends Activity {
 		
 		if (scoreClass.scoreRank  == null){
 			  Log.d(WRmainActivity.TAG, "create the score arraly list the first time");
-		      scoreList = new scoreClass();                                           //instantiate scoreList
+		      singleScoreList = new scoreClass();                                           //instantiate scoreList
 		  }
 		else{
 			  Log.d(WRmainActivity.TAG, "scoreRank already exists");
 		  }
-		
-	/*	if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}    */
 		
 		addListenerToButton();
 	}

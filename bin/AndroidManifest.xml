@@ -56,6 +56,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.funnywords.LoadingActivity" />
         </activity>
+        <activity
+            android:name=".NewScoreActivity"
+            android:label="@string/title_activity_new_score"
+            android:parentActivityName=".WRmainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.funnywords.WRmainActivity" />
+        </activity>
     </application>
 
 </manifest>
